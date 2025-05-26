@@ -198,6 +198,8 @@ gemini_response = client.models.generate_content(
 print(f"Table for {tickers[0]}:\n{gemini_response}")
 
 
+"""
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -207,3 +209,75 @@ plt.title('Closing Prices of AAPL, MSFT and GOOG')
 plt.xlabel('Date')
 plt.ylabel('Price')
 plt.show()
+
+"""
+
+import time
+import pandas as pd
+
+# Performance Optimization and Error Handling
+
+# Prompt Optimization (Example demonstrating a more concise prompt)
+prompt_template = prompts.concise_prompt
+
+example_prompt = prompt_template.format(
+    ticker=tickers[0],
+    start_date=start_date,
+    end_date=end_date
+)
+
+start_time = time.time()    # Measure API call time
+gemini_response = client.models.generate_content(
+    model=model_name,
+    contents=example_prompt,
+).text
+end_time = time.time()
+print(f"Concise Prompt Response ({end_time - start_time:.2f} seconds):\n{gemini_response}")
+
+
+# Batching Requests (Example for fetching multiple metrics at once)
+
+prompt_template = prompts.batched_prompt
+
+example_prompt = prompt_template.format(
+    tickers=(', '.join(tickers)),
+    start_date=start_date,
+    end_date=end_date
+)
+
+start_time = time.time()    # Measure API call time
+gemini_response = client.models.generate_content(
+    model=model_name,
+    contents=example_prompt,
+).text
+end_time = time.time()
+print(f"Batched Prompt Response ({end_time - start_time:.2f} seconds):\n{gemini_response}")
+
+# Error Handling (Robust error handling with retries)
+def call_gemini_with_retry(prompt, retries=3, backoff_factor=2):
+    """Calls Gemini API with retry mechanism."""
+    for i in range(retries):
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+            )
+            return response.text
+        except Exception as e:  # Generic exception handling for various potential errors
+            if i < retries - 1:
+                sleep_time = backoff_factor ** i
+                print(f"Error: {e}. Retrying in {sleep_time} seconds...")
+                time.sleep(sleep_time)
+            else:
+                raise Exception(f"Failed to call Gemini after {retries} retries: {e}")
+
+prompt_template = prompts.retry_prompt
+
+example_prompt = prompt_template.format(
+    ticker=tickers[1],
+    start_date=start_date,
+    end_date=end_date
+)
+
+gemini_response = call_gemini_with_retry(example_prompt)
+print(f"Retry Prompt Response:\n{gemini_response}")

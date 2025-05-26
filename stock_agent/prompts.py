@@ -41,7 +41,7 @@ Create a table summarizing the following metrics for {ticker} from {start_date} 
 """
 
 concise_prompt = """
-Analyze {tickers[0]}'s financial performance ({start_date} - {end_date}).
+Analyze {ticker}'s financial performance ({start_date} - {end_date}).
 Key metrics: High, Low, Average and Standard Deviation of closing prices.
 """
 
@@ -49,4 +49,8 @@ batched_prompt = """
 Provide the following metrics for {tickers} from {start_date} to {end_date}:
 * Highest and lowest closing prices.
 * Average closing price.
+"""
+
+retry_prompt = """
+What were the key performance indicators for {ticker} during {start_date} and {end_date}?
 """

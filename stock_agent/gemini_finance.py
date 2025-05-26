@@ -100,3 +100,110 @@ gemini_response = client.models.generate_content(
     contents=example_prompt,
 ).text
 print(f"Trend Identification Prompt Response:\n{gemini_response}")
+
+
+# Gemini-Driven Financial Data Exploration
+
+# Trend Analysis
+prompt_template = prompts.trend_analysis_prompt
+
+example_prompt = prompt_template.format(
+    ticker="AAPL",
+    start_date=start_date,
+    end_date=end_date
+)
+
+#gemini_response = gemini_model.generate_content(example_prompt).text
+gemini_response = client.models.generate_content(
+    model=model_name,
+    contents=example_prompt,
+).text
+print(f"Trend Analysis Response:\n{gemini_response}")
+
+
+# Anomaly Detection
+prompt_template = prompts.anomaly_detection_prompt
+
+example_prompt = prompt_template.format(
+    ticker="MSFT",
+    start_date=start_date,
+    end_date=end_date
+)
+
+#gemini_response = gemini_model.generate_content(example_prompt).text
+gemini_response = client.models.generate_content(
+    model=model_name,
+    contents=example_prompt,
+).text
+print(f"Anomaly Detection Response:\n{gemini_response}")
+
+
+# Comparative Analysis
+prompt_template = prompts.comparative_analysis_prompt
+
+example_prompt = prompt_template.format(
+    ticker1="GOOG",
+    ticker2="AAPL",
+    start_date=start_date,
+    end_date=end_date
+)
+
+#gemini_response = gemini_model.generate_content(example_prompt).text
+gemini_response = client.models.generate_content(
+    model=model_name,
+    contents=example_prompt,
+).text
+print(f"Comparative Analysis Response:\n{gemini_response}")
+
+
+# Generative Narrative Financial Reports with Gemini
+
+# Report Structuring
+prompt_template = prompts.report_prompt
+
+for ticker in tickers:
+    example_prompt = prompt_template.format(
+        ticker=ticker,
+        start_date=start_date,
+        end_date=end_date
+    )
+    gemini_response = client.models.generate_content(
+        model=model_name,
+        contents=example_prompt,
+    ).text
+    print(f"Financial Report for {ticker}:\n{gemini_response}")
+
+    # Table Generation (within the report generation prompt)
+    # The report_template above already requests a table in the Performance Analysis.
+
+    # Combining Insights (demonstrated below by adding calculated stats)
+    # Extracting a relevant statistic (e.g., 20-day MA)
+    last_ma20 = data[f"{ticker}_20_MA"].iloc[-1]
+    print(f"Enhanced Report for {ticker}:\n{gemini_response}")
+
+# Example of a more detailed table generation prompt (if not included in the main report template)
+prompt_template = prompts.table_prompt
+
+example_prompt = prompt_template.format(
+    ticker=tickers[0],
+    start_date=start_date,
+    end_date=end_date
+)
+
+#gemini_response = gemini_model.generate_content(example_prompt).text
+gemini_response = client.models.generate_content(
+    model=model_name,
+    contents=example_prompt,
+).text
+print(f"Table for {tickers[0]}:\n{gemini_response}")
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(10, 6))
+sns.lineplot(data=data['Close'])
+plt.title('Closing Prices of AAPL, MSFT and GOOG')
+plt.xlabel('Date')
+plt.ylabel('Price')
+plt.show()

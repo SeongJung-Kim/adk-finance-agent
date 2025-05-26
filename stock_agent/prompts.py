@@ -32,6 +32,14 @@ Include the following sections:
 * **Risk Assessment:** Discuss potential risks and uncertainties.
 """
 
+table_prompt = """
+Create a table summarizing the following metrics for {ticker} from {start_date} to {end_date}:
+* Highest Closing Price
+* Lowest Closing Price
+* Average Closing Price
+* Standard Deviation of Closing Price
+"""
+
 concise_prompt = """
 Analyze {tickers[0]}'s financial performance ({start_date} - {end_date}).
 Key metrics: High, Low, Average and Standard Deviation of closing prices.

@@ -198,7 +198,6 @@ gemini_response = client.models.generate_content(
 print(f"Table for {tickers[0]}:\n{gemini_response}")
 
 
-"""
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -210,7 +209,7 @@ plt.xlabel('Date')
 plt.ylabel('Price')
 plt.show()
 
-"""
+
 
 import time
 import pandas as pd

@@ -1,4 +1,10 @@
 yfinance
+opendartreader
+finance-datareader==0.9.96
+
+mcp[cli]
+httpx
+
 matplotlib
 seaborn
 

@@ -1,0 +1,72 @@
+sources:
+  mhkim-da-source:
+    kind: bigquery
+    project: <프로젝트ID>
+    location: <리전>
+tools:
+  get_businesses_by_area:
+    kind: bigquery-sql
+    source: mhkim-da-source
+    description: 지정된 지역(location)에 있는 숙박업소의 목록을 반환합니다.
+    parameters:
+      - name: location
+        type: string
+        description: 조회할 지역 이름
+    statement: |
+      SELECT
+        service_name,
+        location_full_address,
+        approval_date
+      FROM `test.accommodation`
+      WHERE location_full_address LIKE CONCAT('%', @location, '%')
+      ORDER BY approval_date DESC
+      LIMIT 100;
+  get_businesses_by_year:
+    kind: bigquery-sql
+    source: mhkim-da-source
+    description: 지정된 연도(year)에 승인된 숙박업소 수를 연도별로 집계합니다.
+    parameters:
+      - name: year
+        type: integer
+        description: 승인 연도
+    statement: |
+      SELECT
+        COUNT(*) AS num_businesses
+      FROM `test.accommodation`
+      WHERE EXTRACT(YEAR FROM approval_date) = @year
+      LIMIT 100;
+  get_room_stats_by_area:
+    kind: bigquery-sql
+    source: mhkim-da-source
+    description: 지정된 지역(location)의 객실 수(한옥실, 양실) 평균을 계산합니다.
+    parameters:
+      - name: location
+        type: string
+        description: 객실 통계를 조회할 지역 이름
+    statement: |
+      SELECT
+        AVG(num_korean_style_rooms) AS avg_korean_rooms,
+        AVG(num_western_style_rooms) AS avg_western_rooms
+      FROM `test.accommodation`
+      WHERE location_full_address LIKE CONCAT('%', @location, '%')
+      LIMIT 100;
+  get_employee_count_by_category:
+    kind: bigquery-sql
+    source: mhkim-da-source
+    description: 지정된 업종(category)의 평균 직원 수(남여 합산)을 반환합니다.
+    parameters:
+      - name: category
+        type: string
+        description: 조회할 업종명
+    statement: |
+      SELECT
+        AVG(COALESCE(num_female_employees, 0) + COALESCE(num_male_employees, 0)) AS avg_employees
+      FROM `test.accommodation`
+      WHERE business_category_name = @category
+      LIMIT 100;
+toolsets:
+  mhkim_bq_toolset:
+    - get_businesses_by_area
+    - get_businesses_by_year
+    - get_room_stats_by_area
+    - get_employee_count_by_category

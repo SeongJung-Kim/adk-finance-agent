@@ -5,6 +5,9 @@ finance-datareader==0.9.96
 mcp[cli]
 httpx
 toolbox-core
+toolbox-langchain
+toolbox-llamaindex
+toolbox-openai
 
 matplotlib
 seaborn
